@@ -2,39 +2,36 @@ from discord.ext import commands
 from os import getenv
 from thonk import utils
 
-bot = commands.Bot("\u2b6e")
+#bot = commands.Bot(command_prefix="$", description="ThonkBot")
+bot = commands.Bot(command_prefix="\u2b6e", description="ThonkBot")
 
-class MainCog:
-    async def on_ready(self):
-        print(f"Logged in as {bot.user.name}.")
-
-    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
-        await ctx.send("\N{ANGER SYMBOL} There was a problem!\n```\n" + utils.safe_text(str(error)) + "\n```")
-
-    @commands.command()
-    async def reload(self, ctx: commands.Context, cog_name: str):
-        """
-        Reload a module.
-        """
-        if not cog_name.startswith("cogs."):
-            cog_name = "cogs." + cog_name
-
-        bot.unload_extension(cog_name)
+def load_all_cogs():
+    for cog_name in utils.get_all_cogs():
         bot.load_extension(cog_name)
 
-        await ctx.send(f"Reloaded cog `{cog_name}`.")
+@bot.command()
+async def reload(ctx: commands.Context, *args):
+    """Reloads a cog."""
 
-    @commands.command()
-    async def restart(self, ctx: commands.Context):
-        """
-        Restart the bot.
-        """
-        await ctx.send("Going down!")
-        await bot.logout()
+    if len(args) < 1:
+        cogs = bot.extensions.keys()
+        for cog in cogs:
+            bot.unload_extension(cog)
+        load_all_cogs()
+        return
 
-bot.add_cog(MainCog())
+    cog_name = args[0]
 
-for cog_name in utils.get_all_cogs():
+    if not cog_name.startswith("cogs."):
+        cog_name = "cogs." + cog_name
+
+    bot.unload_extension(cog_name)
     bot.load_extension(cog_name)
 
-bot.run(getenv("TOKEN"))
+    await ctx.send(f"Reloaded: `{cog_name}`.")
+
+
+load_all_cogs()
+
+print("Connecting...")
+bot.run(getenv('TOKEN'))
