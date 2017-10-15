@@ -1,9 +1,6 @@
-import time
-import traceback
-import sys
-from thonk import utils
 from discord.ext import commands
 from raven import Client
+from thonk import utils
 from thonk.sentry import AioHttpTransport
 from traceback import print_exception
 
@@ -21,9 +18,11 @@ class Core:
         if isinstance(error, commands.CommandNotFound):
             return
 
-        if hasattr(self, "raven"):
-            self.raven.captureException(exc_info=utils.exc_info(error))
-        elif not utils.is_deployed():
+        if isinstance(error, commands.CommandInvokeError):
+            if hasattr(self, "raven"):
+                self.raven.captureException(exc_info=utils.exc_info(error.original))
+
+        if not utils.is_deployed():
             print_exception(*utils.exc_info(error))
 
         await ctx.send("\N{ANGER SYMBOL} There was a problem!\n```\n" + utils.safe_text(str(error)) + "\n```")
