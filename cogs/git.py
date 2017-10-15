@@ -1,6 +1,7 @@
 from discord.ext import commands
 from os import getenv
 import aiohttp
+import json
 
 class GitManagementCog:
     def __init__(self):
@@ -28,7 +29,7 @@ class GitManagementCog:
 
         async with aiohttp.ClientSession() as session:
             resp = await session.put(f"https://api.github.com/repos/general-programming/thonkbot/pulls/{pr}/merge",
-                                     data=data, headers=headers)
+                                     data=json.dumps(data), headers=headers)
 
             if resp.status == 200:
                 await ctx.send(f"Merged #{pr} successfully.")
