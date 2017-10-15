@@ -2,7 +2,6 @@ from discord.ext import commands
 from os import getenv
 from thonk import utils
 
-#bot = commands.Bot(command_prefix="$", description="ThonkBot")
 bot = commands.Bot(command_prefix="\u2b6e", description="ThonkBot")
 
 def load_all_cogs():
