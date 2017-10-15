@@ -2,10 +2,10 @@ from discord.ext import commands
 from os import getenv
 from thonk import utils
 
-bot = commands.Bot("\N{THINKING FACE}")
+bot = commands.Bot("\u2b6e")
 
 class MainCog:
-    def on_ready(self):
+    async def on_ready(self):
         print(f"Logged in as {bot.user.name}.")
 
     @commands.command()
@@ -16,7 +16,12 @@ class MainCog:
         bot.unload_extension(cog_name)
         bot.load_extension(cog_name)
 
-        await ctx.send(f"Reloaded cog {cog_name}.")
+        await ctx.send(f"Reloaded cog `{cog_name}`.")
+
+    @commands.command()
+    async def restart(self, ctx: commands.Context):
+        await ctx.send("Going down!")
+        await bot.logout()
 
 bot.add_cog(MainCog())
 
