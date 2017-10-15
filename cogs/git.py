@@ -11,6 +11,9 @@ class GitManagementCog:
 
     @commands.command()
     async def gitmerge(self, ctx: commands.Context, pr: int):
+        """
+        Merge a PR.
+        """
         gh_token = getenv("GH_TOKEN")
 
         data = {

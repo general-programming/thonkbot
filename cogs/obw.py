@@ -22,6 +22,9 @@ class Obw:
 
     @commands.command()
     async def roll(self, ctx: commands.Context, *dice: str):
+        """
+        Roll dice!
+        """
         embed = discord.Embed(title="Dice Roll Results")
 
         for die in dice:

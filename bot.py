@@ -13,6 +13,9 @@ class MainCog:
 
     @commands.command()
     async def reload(self, ctx: commands.Context, cog_name: str):
+        """
+        Reload a module.
+        """
         if not cog_name.startswith("cogs."):
             cog_name = "cogs." + cog_name
 
@@ -23,6 +26,9 @@ class MainCog:
 
     @commands.command()
     async def restart(self, ctx: commands.Context):
+        """
+        Restart the bot.
+        """
         await ctx.send("Going down!")
         await bot.logout()
 
