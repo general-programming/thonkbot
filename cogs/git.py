@@ -18,7 +18,7 @@ class GitManagementCog:
         gh_token = getenv("GH_TOKEN")
 
         data = {
-            "commit_title": f"Merged by {ctx.message.author}",
+            "commit_title": f"#{pr} Merged by {ctx.message.author}",
             "commit_message": f"Merge triggered by command in #{ctx.channel.name}."
         }
 
