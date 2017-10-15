@@ -28,4 +28,4 @@ bot.add_cog(MainCog())
 for cog_name in utils.get_all_cogs():
     bot.load_extension(cog_name)
 
-bot.run(token=getenv("TOKEN"))
+bot.run(getenv("TOKEN"))
