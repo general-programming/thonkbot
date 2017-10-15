@@ -8,6 +8,9 @@ class MainCog:
     async def on_ready(self):
         print(f"Logged in as {bot.user.name}.")
 
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
+        await ctx.send("\N{ANGER SYMBOL} There was a problem!\n```\n" + utils.safe_text(str(error)) + "\n```")
+
     @commands.command()
     async def reload(self, ctx: commands.Context, cog_name: str):
         if not cog_name.startswith("cogs."):
