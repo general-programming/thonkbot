@@ -2,7 +2,12 @@ from discord.ext import commands
 from os import getenv
 from thonk import utils
 
-bot = commands.Bot(command_prefix="\u2b6e", description="ThonkBot")
+prefixes = [
+    "\N{Clockwise Triangle-Headed Open Circle Arrow}",
+    "\N{Clockwise Open Circle Arrow}",
+    "\N{Clockwise Gapped Circle Arrow}"
+]
+bot = commands.Bot(command_prefix=prefixes, description="ThonkBot")
 
 def load_all_cogs():
     for cog_name in utils.get_all_cogs():
