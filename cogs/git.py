@@ -24,7 +24,7 @@ class GitManagementCog:
         }
 
         async with aiohttp.ClientSession() as session:
-            resp = await session.put("https://api.github.com/repos/general-programming/thonkbot/pulls/{pr}/merge",
+            resp = await session.put(f"https://api.github.com/repos/general-programming/thonkbot/pulls/{pr}/merge",
                                      data=data, headers=headers)
 
             if resp.status == 200:
