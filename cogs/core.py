@@ -26,7 +26,6 @@ class Core:
             print_exception(*utils.exc_info(error))
 
         await ctx.send("\N{ANGER SYMBOL} There was a problem!\n```\n" + utils.safe_text(str(error)) + "\n```")
-        traceback.print_exception(type(error), error, error.__traceback__, file=sys.stderr)
 
 
     @commands.command()
