@@ -17,7 +17,7 @@ class Obw:
         n, v = map(int, parts.group(1, 2))
         offset = int(parts.group(3) or 0)
 
-        rolls = map(lambda i: random.randint(offset, v + offset), range(0, n))
+        rolls = map(lambda i: str(random.randint(offset, v + offset)), range(0, n))
         return list(rolls)
 
     @commands.command()
