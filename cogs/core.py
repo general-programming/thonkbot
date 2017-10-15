@@ -3,6 +3,7 @@ from raven import Client
 from thonk import utils
 from thonk.sentry import AioHttpTransport
 from traceback import print_exception
+import time
 
 class Core:
     def __init__(self, bot: commands.Bot):
@@ -28,6 +29,23 @@ class Core:
         await ctx.send("\N{ANGER SYMBOL} There was a problem!\n```\n" + utils.safe_text(str(error)) + "\n```")
 
     @commands.command()
+    async def ping(self, ctx):
+        """Pong!"""
+        channel = ctx.message.channel
+        t1 = time.perf_counter()
+        await ctx.trigger_typing()
+        t2 = time.perf_counter()
+        diff = round((t2-t1)*1000)
+        await ctx.send(f"Pong! {diff}ms")
+
+    @commands.command()
+    async def pong(self, ctx):
+        """Pong?"""
+        await ctx.send(f"I hear {ctx.author.name} likes cute Asian boys.")
+
+
+
+    @commands.command()
     async def cogs(self, ctx):
         """
         Lists all cogs.
@@ -42,8 +60,8 @@ class Core:
         """
         await ctx.send(arg)
 
-    @commands.command()
-    async def eval(self, ctx, *, arg):
+    @commands.command(name="eval")
+    async def _eval(self, ctx, *, arg):
         """
         Evaluates a raw message.
         """

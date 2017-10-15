@@ -4,14 +4,28 @@ import aiohttp
 import json
 
 class GitManagementCog:
+    name = "Git Management"
+
     def __init__(self):
         pass
 
     async def __local_check(self, ctx: commands.Context):
         return True
 
-    @commands.command()
-    async def gitmerge(self, ctx: commands.Context, pr: int):
+    @commands.group(invoke_without_command=True)
+    async def git(self, ctx):
+        """
+        Git management.
+        """
+        temp_ctx = ctx
+        temp_ctx.invoked_with = 'help git'
+        pages = await ctx.bot.formatter.format_help_for(ctx, self.git)
+        for page in pages:
+            await ctx.send(page)
+        pass
+
+    @git.command()
+    async def merge(self, ctx: commands.Context, pr: int):
         """
         Merge a PR.
         """
