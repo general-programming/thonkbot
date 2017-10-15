@@ -1,4 +1,3 @@
-import sys
 from discord.ext import commands
 from os import getenv
 from thonk import utils, formatter
