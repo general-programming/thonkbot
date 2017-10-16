@@ -3,6 +3,7 @@ import inspect
 from discord.ext import commands
 from discord.ext.commands import Paginator, Command
 
+# cogs can set a 'name' attribute which the custom formatter will display
 def get_pretty_cog_name(command):
     cog = command.cog_name
     if command.instance is not None and hasattr(command.instance, 'name'):
