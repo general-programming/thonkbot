@@ -1,7 +1,14 @@
 from discord.ext import commands
+from thonk import twitter
 import discord
 import re
 import random
+import textwrap
+
+async def find_last_user_message(ctx: commands.Context, user: discord.User) -> discord.Message:
+    async for msg in ctx.channel.history(before=ctx.message):
+        if msg.author.id == user.id:
+            return msg
 
 class Obw:
     """
@@ -41,6 +48,32 @@ class Obw:
             embed.add_field(name=die, value=", ".join(rolls))
 
         await ctx.send(embed=embed)
+
+    @commands.command()
+    async def flip(self, ctx: commands.Context, *, to_flip: str):
+        parts = map(lambda s: s.trim(), to_flip.split(","))
+        picked = random.choice(parts)
+
+        await ctx.send(picked)
+
+    @commands.command()
+    async def quote(self, ctx: commands.Context, *, username: str):
+        """
+        Quote username's last message in the current channel as a tweet.
+        """
+        user = discord.utils.find(lambda u: u.name.startswith(username), ctx.guild.members)
+
+        if user is None:
+            return await ctx.send("Couldn't find that user to quote!")
+
+        msg = await find_last_user_message(ctx, user)
+        tweet_text = f"\"{msg.clean_content}\" - {str(msg.author)}"
+
+        if len(tweet_text) > 140:
+            raise commands.CommandError("Quote is too long to be a tweet!")
+
+        tweet = await twitter.tweet(tweet_text)
+        await ctx.send(f"https://twitter.com/{tweet.user['screen_name']}/status/{tweet.id_str}")
 
 def setup(bot: commands.Bot):
     bot.add_cog(Obw())
