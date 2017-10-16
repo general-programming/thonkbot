@@ -43,15 +43,21 @@ class Core:
         """Pong?"""
         await ctx.send(f"I hear {ctx.author.name} likes cute Asian boys.")
 
-
-
     @commands.command()
     async def cogs(self, ctx):
         """
         Lists all cogs.
         """
-        cogs = '\n'.join(ctx.bot.extensions.keys())
-        await ctx.send(f"```{cogs}```")
+        cogs = '\n'.join(ctx.bot.cogs.keys())
+        await ctx.send(f"```\n{cogs}```")
+
+    @commands.command()
+    async def extensions(self, ctx):
+        """
+        Lists all extensions.
+        """
+        extensions = '\n'.join(ctx.bot.extensions.keys())
+        await ctx.send(f"```\n{extensions}```")
 
     @commands.command()
     async def echo(self, ctx, *, arg):
@@ -60,15 +66,21 @@ class Core:
         """
         await ctx.send(arg)
 
-    @commands.command(name="eval")
+    @commands.command(name="eval", hidden=True)
+    @utils.is_bot_moderator
     async def _eval(self, ctx, *, arg):
         """
         Evaluates a raw message.
         """
-        result = eval(arg)
-        await ctx.send(f"```{result}```")
+        try:
+            result = eval(arg)
+        except:
+            await ctx.send()
+        else:
+            await ctx.send(f"```{result}```")
 
     @commands.command()
+    @utils.is_bot_moderator
     async def restart(self, ctx: commands.Context):
         """
         Restart the bot.
