@@ -1,14 +1,8 @@
 import itertools
 import inspect
+from thonk import utils
 from discord.ext import commands
 from discord.ext.commands import Paginator, Command
-
-# cogs can set a 'name' attribute which the custom formatter will display
-def get_pretty_cog_name(command):
-    cog = command.cog_name
-    if command.instance is not None and hasattr(command.instance, 'name'):
-        cog = command.instance.name
-    return cog
 
 class CustomHelpFormatter(commands.HelpFormatter):
     async def format(self):
@@ -46,7 +40,7 @@ class CustomHelpFormatter(commands.HelpFormatter):
         max_width = self.max_name_size
 
         def category(tup):
-            cog = get_pretty_cog_name(tup[1])
+            cog = utils.command_get_pretty_cog_name(tup[1])
             # we insert the zero width space there to give it approximate
             # last place sorting position.
             return cog + ':' if cog is not None else '\u200bNo Category:'
