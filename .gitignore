@@ -1,2 +1,5 @@
 thonkenv/
 __pycache__
+.env
+env/
+virtualenv/

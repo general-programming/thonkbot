@@ -1,0 +1,26 @@
+version: '2'
+services:
+  redis:
+    image: redis:4.0.2-alpine
+    volumes:
+      - redis:/data
+    restart: always
+    command: "redis-server --appendonly yes"
+
+  bot:
+      build:
+          context: .
+      restart: always
+      environment:
+        REDIS_HOST: redis
+        REDIS_PORT: 6379
+      read_only: true
+      tmpfs:
+        - /run
+        - /tmp
+      env_file: .env
+      depends_on:
+        - redis
+volumes:
+  redis:
+    driver: local
