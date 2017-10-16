@@ -60,7 +60,8 @@ class Obw:
         """
         Quote username's last message in the current channel as a tweet.
         """
-        user = discord.utils.find(lambda u: u.name.startswith(username), ctx.guild.members)
+        user = await commands.MemberConverter().convert(ctx, username) or\
+               discord.utils.find(lambda u: u.name.lower().startswith(username.lower()), ctx.guild.members)
 
         if user is None:
             return await ctx.send("Couldn't find that user to quote!")
