@@ -75,8 +75,8 @@ class Core:
         """
         try:
             result = eval(arg)
-        except:
-            await ctx.send()
+        except Exception as err:
+            await ctx.send(f"\N{ANGER SYMBOL} Error in eval:\n```py\n{utils.safe_text(str(err))}\n```")
         else:
             await ctx.send(f"```{result}```")
 
