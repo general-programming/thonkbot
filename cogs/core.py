@@ -67,7 +67,7 @@ class Core:
         await ctx.send(arg)
 
     @commands.command(name="eval", hidden=True)
-    @utils.is_bot_moderator
+    @utils.require_tag('owner')
     async def _eval(self, ctx, *, arg):
         """
         Evaluates a raw message.
