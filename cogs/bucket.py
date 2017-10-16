@@ -30,7 +30,7 @@ class Bucket:
         if msg.author.id == self.bot.user.id:
             return
 
-        if msg.content.startswith(self.bot.command_prefix):
+        if msg.content.startswith(tuple(self.bot.command_prefix)):
             return
 
         for p in self.patterns:
