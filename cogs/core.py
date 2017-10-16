@@ -22,6 +22,7 @@ class Core:
         if isinstance(error, commands.CommandInvokeError):
             if hasattr(self, "raven"):
                 self.raven.captureException(exc_info=utils.exc_info(error.original))
+            error = error.original
 
         if not utils.is_deployed():
             print_exception(*utils.exc_info(error))
@@ -48,7 +49,7 @@ class Core:
         """
         Lists all cogs.
         """
-        cogs = '\n'.join(ctx.bot.cogs.keys())
+        cogs = '\n'.join(map(utils.get_pretty_cog_name, ctx.bot.cogs.values()))
         await ctx.send(f"```\n{cogs}```")
 
     @commands.command()

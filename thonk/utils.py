@@ -18,6 +18,23 @@ def safe_text(text: str):
 def exc_info(exception: Exception):
     return (type(exception), exception, exception.__traceback__)
 
+# cogs can set a 'name' attribute which the custom formatter will display
+def command_get_pretty_cog_name(command):
+    cog = command.cog_name
+    if command.instance is not None and hasattr(command.instance, 'name'):
+        cog = command.instance.name
+    return cog
+
+def cog_get_pretty_name(cog):
+    if cog is not None:
+        if hasattr(cog, 'name'):
+            return cog.name
+        else:
+            return cog.__class__.__name__
+    else:
+        return None
+
+
 with open('permissions.json') as data_file:
     permissions = json.load(data_file)
 
