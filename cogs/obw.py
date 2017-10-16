@@ -42,5 +42,12 @@ class Obw:
 
         await ctx.send(embed=embed)
 
+    @commands.command()
+    async def flip(self, ctx: commands.Context, *, to_flip: str):
+        parts = map(lambda s: s.trim(), to_flip.split(","))
+        picked = random.choice(parts)
+
+        await ctx.send(picked)
+
 def setup(bot: commands.Bot):
     bot.add_cog(Obw())
