@@ -1,4 +1,5 @@
 from discord.ext import commands
+from thonk import utils
 import re
 import json
 
@@ -8,8 +9,7 @@ class Bucket:
     patterns = {}
 
     def __init__(self, bot):
-        with open('bucket.json') as saved:
-            self.patterns = json.load(saved)
+        self.patterns = utils.load_json('bucket.json')
         self.bot = bot
 
     def process(self, msg, str, match=None):

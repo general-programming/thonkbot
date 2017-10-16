@@ -16,7 +16,11 @@ def safe_text(text: str):
                .replace("`", "\u02cb")
 
 def exc_info(exception: Exception):
-    return (type(exception), exception, exception.__traceback__)
+    return type(exception), exception, exception.__traceback__
+
+def load_json(filename: str):
+    with open(filename, mode='r') as file:
+        return json.load(file)
 
 # cogs can set a 'name' attribute which the custom formatter will display
 def command_get_pretty_cog_name(command):
@@ -34,9 +38,7 @@ def cog_get_pretty_name(cog):
     else:
         return None
 
-with open('permissions.json') as data_file:
-    permissions = json.load(data_file)
-
+permissions = load_json('permissions.json')
 def require_tag(tag):
     def predicate(ctx):
         for role in ctx.author.roles:
