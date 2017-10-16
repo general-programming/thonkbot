@@ -43,6 +43,7 @@ class GitManagementCog:
             "Authorization": f"token {gh_token}"
         }
 
+        await ctx.typing()
         async with aiohttp.ClientSession() as session:
             resp = await session.put(f"https://api.github.com/repos/general-programming/thonkbot/pulls/{pr}/merge",
                                      data=json.dumps(data), headers=headers)
