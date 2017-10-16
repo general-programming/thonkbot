@@ -50,8 +50,16 @@ class Core:
         """
         Lists all cogs.
         """
-        cogs = '\n'.join(ctx.bot.extensions.keys())
-        await ctx.send(f"```{cogs}```")
+        cogs = '\n'.join(ctx.bot.cogs.keys())
+        await ctx.send(f"```\n{cogs}```")
+
+    @commands.command()
+    async def extensions(self, ctx):
+        """
+        Lists all extensions.
+        """
+        extensions = '\n'.join(ctx.bot.extensions.keys())
+        await ctx.send(f"```\n{extensions}```")
 
     @commands.command()
     async def echo(self, ctx, *, arg):
@@ -60,7 +68,7 @@ class Core:
         """
         await ctx.send(arg)
 
-    @commands.command(name="eval")
+    @commands.command(name="eval", hidden=True)
     async def _eval(self, ctx, *, arg):
         """
         Evaluates a raw message.
