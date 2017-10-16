@@ -14,13 +14,17 @@ class Obw:
 
     def parse_die(self, die: str):
         parts = self.DIE_REGEX.match(die)
+
+        if parts is None:
+            raise commands.BadArgument("Incorrect dice format! Format: `<number of dice>d<max>(+<offset>)")
+
         n, v = map(int, parts.group(1, 2))
         offset = int(parts.group(3) or 0)
 
         if n > 50:
-            raise Exception("I can't roll that many dice!")
+            raise commands.BadArgument("I can't roll that many dice!")
         if v > 10000:
-            raise Exception("That's a bit of a large die...")
+            raise commands.BadArgument("That's a bit of a large die...")
 
         rolls = map(lambda i: str(random.randint(offset, v + offset)), range(0, n))
         return list(rolls)
