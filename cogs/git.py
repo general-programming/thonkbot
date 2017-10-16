@@ -1,5 +1,6 @@
 from discord.ext import commands
 from os import getenv
+from thonk import utils
 import aiohttp
 import json
 
@@ -25,6 +26,7 @@ class GitManagementCog:
         pass
 
     @git.command()
+    @utils.is_bot_moderator
     async def merge(self, ctx: commands.Context, pr: int):
         """
         Merge a PR.

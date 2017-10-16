@@ -1,3 +1,5 @@
+from discord.ext import commands
+import discord
 import pkgutil
 import json
 import os
@@ -36,3 +38,13 @@ def require_tag(tag):
 
 def is_deployed() -> bool:
     return os.getenv("DEPLOY") == "PRODUCTION"
+
+# use require_tag() instead
+def _is_moderator_predicate(ctx: commands.Context):
+    if not isinstance(ctx.channel, discord.abc.GuildChannel):
+        return False
+
+    role = discord.utils.get(ctx.author.roles, id=369280277840789505)
+    return role is not None
+
+is_bot_moderator = commands.check(_is_moderator_predicate)
