@@ -18,7 +18,7 @@ class Obw:
         offset = int(parts.group(3) or 0)
 
         if n > 50:
-            raise Exception("I can't roll that many die!")
+            raise Exception("I can't roll that many dice!")
         if v > 10000:
             raise Exception("That's a bit of a large dice...")
 
