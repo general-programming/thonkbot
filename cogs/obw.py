@@ -3,7 +3,6 @@ from thonk import twitter
 import discord
 import re
 import random
-import textwrap
 
 async def find_last_user_message(ctx: commands.Context, user: discord.User) -> discord.Message:
     async for msg in ctx.channel.history(before=ctx.message):
