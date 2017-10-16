@@ -34,7 +34,6 @@ def cog_get_pretty_name(cog):
     else:
         return None
 
-
 with open('permissions.json') as data_file:
     permissions = json.load(data_file)
 
@@ -49,7 +48,6 @@ def require_tag(tag):
                         return True
         return False
     return commands.check(predicate)
-
 
 def is_deployed() -> bool:
     return os.getenv("DEPLOY") == "PRODUCTION"
