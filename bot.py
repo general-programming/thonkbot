@@ -28,7 +28,7 @@ async def reload(ctx: commands.Context, *args):
             print(f"Unloading Cog: {cog}")
             bot.unload_extension(cog)
         load_all_cogs()
-        await ctx.send("Done.")
+        await ctx.send(f"Reloaded {len(cogs)} extensions.")
         return
 
     cog_name = args[0]

@@ -19,19 +19,22 @@ def safe_text(text: str):
 def exc_info(exception: Exception):
     return type(exception), exception, exception.__traceback__
 
-def load_json(filename: str):
+
+def load_json(filename: str, **kwargs):
     with open(filename, mode='r') as file:
-        return json.load(file)
+        return json.load(file, **kwargs)
+
+def dump_json(obj, filename: str, **kwargs):
+    with open(filename, mode='w') as file:
+        return json.dump(obj, filename, **kwargs)
+
 
 
 def cog_get_pretty_name(cog):
     if cog is None: return None
 
     doc = inspect.getdoc(cog)
-    if doc is not None:
-        return doc
-    else:
-        return cog.__class__.__name__
+    return doc if doc is not None else cog.__class__.__name__
 
 permissions = load_json('data/permissions.json')
 def require_tag(tag):

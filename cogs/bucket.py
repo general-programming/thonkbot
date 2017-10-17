@@ -34,22 +34,21 @@ class Bucket:
             return
 
         for p in self.patterns:
-            match = re.search(self.process(msg, p), msg.content, re.I)
+            match = re.search(p, msg.content, re.I)
             if match is not None:
-                await msg.channel.send(self.process(msg, self.patterns[p], match))
+                await msg.channel.send(self.patterns[p], match)
 
     @commands.command()
-    async def bdebug(self, ctx):
+    async def blist(self, ctx):
         patterns = '\n'.join(self.patterns.keys())
         await ctx.send(f"```\n{patterns}```")
 
     @commands.command()
     async def bsave(self, ctx):
-        with open('bucket.json', 'w') as outfile:
-            json.dump(self.patterns, outfile)
+        utils.dump_json(self.patterns, "data/bucket.json")
 
 
-    @commands.command(aliases=['b'])
+    """@commands.command(aliases=['b'])
     async def bucket(self, ctx, *, msg):
 
         match = re.match(r'(?P<subject>.+)(?P<verb>\s+is\s+|\s+are\s+|<.+>)(?P<object>.+)', msg, re.I)
@@ -77,7 +76,7 @@ class Bucket:
             return
 
         else:
-            await ctx.send("Your message did not match.")
+            await ctx.send("Your message did not match.")"""
 
 def setup(bot: commands.Bot):
     bot.add_cog(Bucket(bot))

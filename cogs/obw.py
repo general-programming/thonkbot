@@ -11,7 +11,7 @@ async def find_last_user_message(ctx: commands.Context, user: discord.User) -> d
 
 class Obw:
     """
-    Obw's cog
+    obw's cog
     """
     DIE_REGEX = re.compile(r"(\d+)d(\d+)(?:\+(\d+))?", re.IGNORECASE)
 
