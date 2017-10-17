@@ -1,6 +1,7 @@
 from discord.ext import commands
 import discord
 import pkgutil
+import inspect
 import json
 import os
 
@@ -22,21 +23,15 @@ def load_json(filename: str):
     with open(filename, mode='r') as file:
         return json.load(file)
 
-# cogs can set a 'name' attribute which the custom formatter will display
-def command_get_pretty_cog_name(command):
-    cog = command.cog_name
-    if command.instance is not None and hasattr(command.instance, 'name'):
-        cog = command.instance.name
-    return cog
 
 def cog_get_pretty_name(cog):
-    if cog is not None:
-        if hasattr(cog, 'name'):
-            return cog.name
-        else:
-            return cog.__class__.__name__
+    if cog is None: return None
+
+    doc = inspect.getdoc(cog)
+    if doc is not None:
+        return doc
     else:
-        return None
+        return cog.__class__.__name__
 
 permissions = load_json('data/permissions.json')
 def require_tag(tag):

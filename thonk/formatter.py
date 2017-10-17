@@ -40,7 +40,7 @@ class CustomHelpFormatter(commands.HelpFormatter):
         max_width = self.max_name_size
 
         def category(tup):
-            cog = utils.command_get_pretty_cog_name(tup[1])
+            cog = utils.cog_get_pretty_name(tup[1].instance)
             # we insert the zero width space there to give it approximate
             # last place sorting position.
             return cog + ':' if cog is not None else '\u200bNo Category:'

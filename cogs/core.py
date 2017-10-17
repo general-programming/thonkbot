@@ -49,7 +49,7 @@ class Core:
         """
         Lists all cogs.
         """
-        cogs = '\n'.join(map(utils.get_pretty_cog_name, ctx.bot.cogs.values()))
+        cogs = '\n'.join(map(utils.cog_get_pretty_name, ctx.bot.cogs.values()))
         await ctx.send(f"```\n{cogs}```")
 
     @commands.command()
