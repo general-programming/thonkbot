@@ -9,7 +9,7 @@ class Bucket:
     patterns = {}
 
     def __init__(self, bot):
-        self.patterns = utils.load_json('bucket.json')
+        self.patterns = utils.load_json('data/bucket.json')
         self.bot = bot
 
     def process(self, msg, str, match=None):

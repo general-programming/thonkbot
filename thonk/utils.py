@@ -38,7 +38,7 @@ def cog_get_pretty_name(cog):
     else:
         return None
 
-permissions = load_json('permissions.json')
+permissions = load_json('data/permissions.json')
 def require_tag(tag):
     def predicate(ctx):
         for role in ctx.author.roles:
