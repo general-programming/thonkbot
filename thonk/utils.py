@@ -21,12 +21,12 @@ def exc_info(exception: Exception):
 
 
 def load_json(filename: str, **kwargs):
-    with open(filename, mode='r') as file:
-        return json.load(file, **kwargs)
+    with open(filename, 'r', encoding='utf8') as file:
+        return json.loads(file.read(), **kwargs)
 
 def dump_json(obj, filename: str, **kwargs):
-    with open(filename, mode='w') as file:
-        return json.dump(obj, filename, **kwargs)
+    with open(filename, mode='w', encoding='utf8') as file:
+        return json.dump(obj, file, **kwargs)
 
 
 

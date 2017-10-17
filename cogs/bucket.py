@@ -12,16 +12,12 @@ class Bucket:
         self.patterns = utils.load_json('data/bucket.json')
         self.bot = bot
 
-    def process(self, msg, str, match=None):
-        str = str.replace('$who', msg.author.mention)
+    def process(self, match, res):
+        if match.lastindex:
+            for i in range(0, match.lastindex + 1):
+                res = res.replace(f'${i}', match.group(i))
 
-        if match is None:
-            str = str.replace('$noun', r'(.+)')
-        else:
-            if match.lastindex is not None and match.lastindex > 0:
-                word = match.group(1)
-                str = str.replace('$noun', match.group(1))
-        return str
+        return res
 
     async def on_message(self, msg):
         if msg.channel.id != 321039517136060418:
@@ -36,11 +32,11 @@ class Bucket:
         for p in self.patterns:
             match = re.search(p, msg.content, re.I)
             if match is not None:
-                await msg.channel.send(self.patterns[p], match)
+                await msg.channel.send(self.process(match, self.patterns[p]))
 
     @commands.command()
     async def blist(self, ctx):
-        patterns = '\n'.join(self.patterns.keys())
+        patterns = '\n'.join([k + " = " + v for k, v in self.patterns.items()])
         await ctx.send(f"```\n{patterns}```")
 
     @commands.command()
@@ -48,7 +44,7 @@ class Bucket:
         utils.dump_json(self.patterns, "data/bucket.json")
 
 
-    """@commands.command(aliases=['b'])
+    @commands.command(aliases=['b'])
     async def bucket(self, ctx, *, msg):
 
         match = re.match(r'(?P<subject>.+)(?P<verb>\s+is\s+|\s+are\s+|<.+>)(?P<object>.+)', msg, re.I)
@@ -76,7 +72,7 @@ class Bucket:
             return
 
         else:
-            await ctx.send("Your message did not match.")"""
+            await ctx.send("Your message did not match.")
 
 def setup(bot: commands.Bot):
     bot.add_cog(Bucket(bot))
