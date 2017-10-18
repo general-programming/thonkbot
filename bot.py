@@ -2,21 +2,18 @@ from discord.ext import commands
 from os import getenv
 from thonk import utils, formatter
 
-prefixes = [
-    "\N{Clockwise Triangle-Headed Open Circle Arrow}",
-    "\N{Clockwise Open Circle Arrow}",
-    "\N{Clockwise Gapped Circle Arrow}"
-]
-if getenv('COMMAND_PREFIX'):
-    prefixes = getenv('COMMAND_PREFIX')
-    print(f"Using custom COMMAND_PREFIX: {prefixes}")
+print()
 
-bot = commands.Bot(command_prefix=prefixes, description="ThonkBot", formatter=formatter.CustomHelpFormatter())
+config = utils.read_ini(getenv('CONFIG') or 'configs/config.ini')
+botcfg = config['bot']
 
-def load_all_cogs():
-    for cog_name in utils.get_all_cogs():
-        print(f"Loading Cog: {cog_name}")
-        bot.load_extension(cog_name)
+prefixes = botcfg.get('command_prefixes').split(',')
+prefixes = [p.strip() for p in prefixes]
+
+print(f"Using command prefixes: {', '.join(prefixes)}")
+
+bot = commands.Bot(command_prefix=prefixes, description=botcfg.get('description'), formatter=formatter.CustomHelpFormatter())
+bot.config = config
 
 @bot.command()
 async def reload(ctx: commands.Context, *args):
@@ -27,7 +24,7 @@ async def reload(ctx: commands.Context, *args):
         for cog in cogs:
             print(f"Unloading Cog: {cog}")
             bot.unload_extension(cog)
-        load_all_cogs()
+        utils.load_all_cogs(bot)
         await ctx.send(f"Reloaded {len(cogs)} extensions.")
         return
 
@@ -43,7 +40,7 @@ async def reload(ctx: commands.Context, *args):
     await ctx.send(f"Reloaded: `{cog_name}`.")
 
 
-load_all_cogs()
+utils.load_all_cogs(bot)
 
 print("Connecting...")
 bot.run(getenv('TOKEN'))

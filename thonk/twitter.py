@@ -2,7 +2,7 @@ from peony import PeonyClient
 from os import getenv
 from . import utils
 
-if utils.is_deployed():
+if getenv("TWITTER_CONFIG"):
     twitter_opts = utils.load_json(getenv("TWITTER_CONFIG"))
     twitter_bot = PeonyClient(**twitter_opts)
 

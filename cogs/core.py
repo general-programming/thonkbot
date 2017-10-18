@@ -11,7 +11,7 @@ class Core:
         self.bot = bot
         self._last_result = None
 
-        if utils.is_deployed():
+        if utils.is_deployed(bot):
             self.raven = Client(transport=AioHttpTransport)
 
     async def on_ready(self):
@@ -26,7 +26,7 @@ class Core:
                 self.raven.captureException(exc_info=utils.exc_info(error.original))
             error = error.original
 
-        if not utils.is_deployed():
+        if not utils.is_deployed(ctx.bot):
             traceback.print_exception(*utils.exc_info(error))
 
         await ctx.send("💢 There was a problem!\n```\n" + utils.safe_text(str(error)) + "\n```")

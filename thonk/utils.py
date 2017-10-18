@@ -1,13 +1,20 @@
 from discord.ext import commands
+from configparser import ConfigParser
 import discord
 import pkgutil
 import inspect
 import json
+import sys
 import os
 
 def get_all_cogs():
     for _, name, _ in pkgutil.iter_modules(["cogs"]):
         yield f"cogs.{name}"
+
+def load_all_cogs(bot):
+    for cog_name in get_all_cogs():
+        print(f"Loading Cog: {cog_name}")
+        bot.load_extension(cog_name)
 
 def safe_text(text: str):
     """
@@ -28,6 +35,16 @@ def dump_json(obj, filename: str, **kwargs):
     with open(filename, mode='w', encoding='utf8') as file:
         return json.dump(obj, file, **kwargs)
 
+def read_ini(filename, base={}):
+    cfg = ConfigParser()
+    print(f"Reading Config: {filename}")
+    with open(filename, 'r', encoding='utf8') as file:
+        cfg.read_string('[_meta]\n' + file.read())
+    base_path = cfg.get('_meta', 'base', fallback=None)
+    if base_path:
+        cfg = read_ini(os.path.join(os.path.dirname(filename), base_path), cfg)
+    cfg.read_dict(base)
+    return cfg
 
 
 def cog_get_pretty_name(cog):
@@ -49,8 +66,8 @@ def require_tag(tag):
         return False
     return commands.check(predicate)
 
-def is_deployed() -> bool:
-    return os.getenv("DEPLOY") == "PRODUCTION"
+def is_deployed(bot):
+    return bot.config.get('bot', 'environment', fallback='development') == 'production'
 
 # use require_tag() instead
 def _is_moderator_predicate(ctx: commands.Context):
