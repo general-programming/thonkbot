@@ -1,5 +1,5 @@
 from discord.ext import commands
-from thonk import twitter
+from thonk import twitter, utils
 import discord
 import re
 import random
@@ -60,19 +60,30 @@ class Obw:
         """
         Quote username's last message in the current channel as a tweet.
         """
-        user = await commands.MemberConverter().convert(ctx, username) or\
-               discord.utils.find(lambda u: u.name.lower().startswith(username.lower()), ctx.guild.members)
+        try:
+            user = await commands.MemberConverter().convert(ctx, username)
+        except commands.BadArgument:
+            user = discord.utils.find(lambda u: u.name.lower().startswith(username.lower()), ctx.guild.members)
 
         if user is None:
             return await ctx.send("Couldn't find that user to quote!")
 
         msg = await find_last_user_message(ctx, user)
         tweet_text = f"\"{msg.clean_content}\" - {str(msg.author)}"
+        media = []
+
+        if len(msg.attachments) > 0:
+            for attachment in msg.attachments:
+                res = await twitter.upload(await utils.to_fp(attachment))
+                media.append(res.media_id)
+
+        if len(msg.clean_content) == 0:
+            raise commands.CommandError("That message is empty!")
 
         if len(tweet_text) > 140:
             raise commands.CommandError("Quote is too long to be a tweet!")
 
-        tweet = await twitter.tweet(tweet_text)
+        tweet = await twitter.tweet(tweet_text, media_ids=media)
         await ctx.send(f"https://twitter.com/{tweet.user['screen_name']}/status/{tweet.id_str}")
 
 def setup(bot: commands.Bot):

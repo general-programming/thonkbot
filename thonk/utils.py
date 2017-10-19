@@ -1,5 +1,6 @@
 from discord.ext import commands
 from configparser import ConfigParser
+from io import BytesIO
 import discord
 import pkgutil
 import inspect
@@ -65,6 +66,13 @@ def require_tag(tag):
                         return True
         return False
     return commands.check(predicate)
+
+async def to_fp(attachment: discord.Attachment):
+    bio = BytesIO()
+    await attachment.save(bio)
+    bio.seek(0)
+
+    return bio
 
 def is_deployed(bot):
     return bot.config.get('bot', 'environment', fallback='development') == 'production'
