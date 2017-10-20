@@ -5,8 +5,7 @@ import aiohttp
 import json
 
 class GitManagementCog:
-    name = "Git Management"
-
+    """Git Management"""
     def __init__(self):
         pass
 

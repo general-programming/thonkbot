@@ -9,19 +9,15 @@ class Bucket:
     patterns = {}
 
     def __init__(self, bot):
-        self.patterns = utils.load_json('bucket.json')
+        self.patterns = utils.load_json('data/bucket.json')
         self.bot = bot
 
-    def process(self, msg, str, match=None):
-        str = str.replace('$who', msg.author.mention)
+    def process(self, match, res):
+        if match.lastindex:
+            for i in range(0, match.lastindex + 1):
+                res = res.replace(f'${i}', match.group(i))
 
-        if match is None:
-            str = str.replace('$noun', r'(.+)')
-        else:
-            if match.lastindex is not None and match.lastindex > 0:
-                word = match.group(1)
-                str = str.replace('$noun', match.group(1))
-        return str
+        return res
 
     async def on_message(self, msg):
         if msg.channel.id != 321039517136060418:
@@ -34,19 +30,18 @@ class Bucket:
             return
 
         for p in self.patterns:
-            match = re.search(self.process(msg, p), msg.content, re.I)
+            match = re.search(p, msg.content, re.I)
             if match is not None:
-                await msg.channel.send(self.process(msg, self.patterns[p], match))
+                await msg.channel.send(self.process(match, self.patterns[p]))
 
     @commands.command()
-    async def bdebug(self, ctx):
-        patterns = '\n'.join(self.patterns.keys())
+    async def blist(self, ctx):
+        patterns = '\n'.join([k + " = " + v for k, v in self.patterns.items()])
         await ctx.send(f"```\n{patterns}```")
 
     @commands.command()
     async def bsave(self, ctx):
-        with open('bucket.json', 'w') as outfile:
-            json.dump(self.patterns, outfile)
+        utils.dump_json(self.patterns, "data/bucket.json")
 
 
     @commands.command(aliases=['b'])
