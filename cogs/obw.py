@@ -58,7 +58,7 @@ class Obw:
     @commands.command()
     async def quote(self, ctx: commands.Context, *, username: str):
         """
-        Quote username's last message in the current channel as a tweet.
+        Tweet a quote of <username>'s last message.
         """
         try:
             user = await commands.MemberConverter().convert(ctx, username)
