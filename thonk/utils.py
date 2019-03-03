@@ -47,7 +47,6 @@ def read_ini(filename, base={}):
     cfg.read_dict(base)
     return cfg
 
-
 def cog_get_pretty_name(cog):
     if cog is None: return None
 

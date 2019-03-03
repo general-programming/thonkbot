@@ -1,11 +1,9 @@
 from discord.ext import commands
 from thonk import utils
 import re
-import json
 
 
 class Bucket:
-
     patterns = {}
 
     def __init__(self, bot):
@@ -43,7 +41,6 @@ class Bucket:
     async def bsave(self, ctx):
         utils.dump_json(self.patterns, "data/bucket.json")
 
-
     @commands.command(aliases=['b'])
     async def bucket(self, ctx, *, msg):
 
@@ -67,12 +64,9 @@ class Bucket:
                 self.patterns[subject] = p = f"{subject} {verb} {sobject}"
 
             await ctx.send(f"```{p}```")
-
-
-            return
-
         else:
             await ctx.send("Your message did not match.")
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(Bucket(bot))

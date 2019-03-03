@@ -31,19 +31,15 @@ class Core:
 
         await ctx.send("💢 There was a problem!\n```\n" + utils.safe_text(str(error)) + "\n```")
 
-
-
     @commands.command()
     async def ping(self, ctx):
         """Pong!"""
-        channel = ctx.message.channel
         t1 = time.perf_counter()
         await ctx.trigger_typing()
         t2 = time.perf_counter()
+
         diff = round((t2-t1)*1000)
         await ctx.send(f"Pong! {diff}ms")
-
-
 
     @commands.command()
     async def cogs(self, ctx):
@@ -61,16 +57,12 @@ class Core:
         extensions = '\n'.join(ctx.bot.extensions.keys())
         await ctx.send(f"```\n{extensions}```")
 
-
-
     @commands.command()
     async def echo(self, ctx, *, arg):
         """
         Echos a raw message.
         """
         await ctx.send(arg)
-
-
 
     def remove_code_tags(self, content):
         """Automatically removes code blocks from the code."""
@@ -80,69 +72,6 @@ class Core:
 
         # remove `foo`
         return content.strip('` \n')
-
-    @commands.command(name="eval", hidden=True)
-    @utils.require_tag('owner')
-    async def _eval(self, ctx, *, body: str):
-        """
-        Evaluates python code.
-        """
-        import textwrap, io
-        from contextlib import redirect_stdout
-
-        env = {
-            'bot': self.bot,
-            'ctx': ctx,
-            'channel': ctx.channel,
-            'author': ctx.author,
-            'guild': ctx.guild,
-            'message': ctx.message,
-            '_': self._last_result
-        }
-        env.update(globals())
-
-        stdout = io.StringIO()
-
-        body = self.remove_code_tags(body)
-
-        executor = exec
-        # single statement, try 'eval' mode
-        if body.count('\n') == 0:
-            try:
-                code = compile(body, '<string>', 'eval')
-            except SyntaxError:
-                pass
-            else:
-                executor = eval
-
-        # if we didn't try eval mode or it failed
-        # then try exec mode
-        if executor is exec:
-            try:
-                body = textwrap.indent(body, "  ")
-                body = f"async def func():\n{body}\n"
-                code = compile(body, '<string>', 'exec')
-            except Exception as e:
-                return await ctx.send(f'❌ There was a compiler error!```py\n{e.__class__.__name__}: {e}\n```')
-
-        try:
-            #await ctx.send(f'Source:```py\n{body}\n```')
-            with redirect_stdout(stdout):
-                ret = executor(code, env)
-                if executor is exec: ret = await env['func']()
-        except Exception as e:
-            return await ctx.send(f'‼️ There was a runtime error!```py\n{e.__class__.__name__}: {e}\n```')
-
-        #await ctx.send(f"Mode: `{executor.__name__}`")
-        output = stdout.getvalue()
-        if output:
-            await ctx.send(f'Output:```py\n{output}\n```')
-        if ret:
-            await ctx.send(f'Returned:```py\n{ret}\n```')
-        if not ret and not output:
-            await ctx.message.add_reaction("✅")
-
-
 
     @commands.command()
     @utils.is_bot_moderator

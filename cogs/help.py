@@ -1,9 +1,9 @@
 from thonk import utils
 from discord.ext import commands
-from discord.ext.commands.bot import _mention_pattern
+from discord.ext.commands.bot import _mention_pattern, _mentions_transforms
 
 @commands.command(name='help')
-async def _help(ctx, *commands : str):
+async def _help(ctx, *commands: str):
     """Shows this message."""
     bot = ctx.bot
     destination = ctx.message.author if bot.pm_help else ctx.message.channel
@@ -62,8 +62,6 @@ async def _help(ctx, *commands : str):
 
     for page in pages:
         await destination.send(page)
-
-
 
 def setup(bot):
     bot.remove_command('help')
