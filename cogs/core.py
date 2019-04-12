@@ -3,8 +3,10 @@ from raven import Client
 from thonk import utils
 from thonk.sentry import AioHttpTransport
 import traceback
-import asyncio
 import time
+import logging
+
+log = logging.getLogger(__name__)
 
 class Core:
     def __init__(self, bot: commands.Bot):
@@ -15,7 +17,7 @@ class Core:
             self.raven = Client(transport=AioHttpTransport)
 
     async def on_ready(self):
-        print(f"Logged in as {self.bot.user.name}.")
+        log.info(f"Logged in as {self.bot.user.name}.")
 
     async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
         if isinstance(error, commands.CommandNotFound):

@@ -1,19 +1,25 @@
 from discord.ext import commands
 from os import getenv
-from thonk import utils, formatter
+from thonk import utils
 
-print()
+import logging
+
+logging.basicConfig(format="[$(name)s %(levelname)s] %(message)s")
 
 config = utils.read_ini(getenv('CONFIG') or 'configs/config.ini')
 botcfg = config['bot']
+secret_config = utils.read_ini(botcfg['secrets'])['secrets']
 
 prefixes = botcfg.get('command_prefixes').split(',')
 prefixes = [p.strip() for p in prefixes]
 
-print(f"Using command prefixes: {', '.join(prefixes)}")
+logger = logging.getLogger(__name__)
 
-bot = commands.Bot(command_prefix=prefixes, description=botcfg.get('description'), formatter=formatter.CustomHelpFormatter())
+logger.info(f"Using command prefixes: {', '.join(prefixes)}")
+
+bot = commands.Bot(command_prefix=prefixes, description=botcfg.get('description'))
 bot.config = config
+bot.secret_config = secret_config
 
 @bot.command()
 async def reload(ctx: commands.Context, *args):
@@ -22,7 +28,7 @@ async def reload(ctx: commands.Context, *args):
     if len(args) < 1:
         cogs = list(bot.extensions.keys())
         for cog in cogs:
-            print(f"Unloading Cog: {cog}")
+            logger.info(f"Unloading Cog: {cog}")
             bot.unload_extension(cog)
         utils.load_all_cogs(bot)
         await ctx.send(f"Reloaded {len(cogs)} extensions.")
@@ -33,7 +39,7 @@ async def reload(ctx: commands.Context, *args):
     if not cog_name.startswith("cogs."):
         cog_name = "cogs." + cog_name
 
-    print(f"Reloading Cog: {cog_name}")
+    logger.info(f"Reloading Cog: {cog_name}")
     bot.unload_extension(cog_name)
     bot.load_extension(cog_name)
 
@@ -42,5 +48,5 @@ async def reload(ctx: commands.Context, *args):
 
 utils.load_all_cogs(bot)
 
-print("Connecting...")
-bot.run(getenv('TOKEN'))
+logger.info("Connecting...")
+bot.run(secret_config['token'])

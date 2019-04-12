@@ -1,14 +1,15 @@
 from peony import PeonyClient
-from os import getenv
 from io import BytesIO
 from . import utils
 
-if getenv("TWITTER_CONFIG"):
-    twitter_opts = utils.load_json(getenv("TWITTER_CONFIG"))
-    twitter_bot = PeonyClient(**twitter_opts)
 
-async def tweet(message: str, **kwargs):
-    return await twitter_bot.api.statuses.update.post(status=message, **kwargs)
+class Twitter:
+    def __init__(self, config_path: str):
+        self._config = utils.load_json(config_path)
+        self.twitter = PeonyClient(**self._config)
 
-async def upload(fp: BytesIO):
-    return await twitter_bot.upload_media(fp)
+    async def tweet(self, message: str, **kwargs):
+        return await self.twitter.api.statuses.update.post(status=message, **kwargs)
+
+    async def upload(self, fp: BytesIO):
+        return await self.twitter.upload_media(fp)

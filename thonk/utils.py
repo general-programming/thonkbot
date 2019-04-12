@@ -5,8 +5,10 @@ import discord
 import pkgutil
 import inspect
 import json
-import sys
+import logging
 import os
+
+log = logging.getLogger(__name__)
 
 def get_all_cogs():
     for _, name, _ in pkgutil.iter_modules(["cogs"]):
@@ -14,7 +16,7 @@ def get_all_cogs():
 
 def load_all_cogs(bot):
     for cog_name in get_all_cogs():
-        print(f"Loading Cog: {cog_name}")
+        log.info(f"Loading Cog: {cog_name}")
         bot.load_extension(cog_name)
 
 def safe_text(text: str):
@@ -30,7 +32,7 @@ def exc_info(exception: Exception):
 
 def load_json(filename: str, **kwargs):
     with open(filename, 'r', encoding='utf8') as file:
-        return json.loads(file.read(), **kwargs)
+        return json.load(file, **kwargs)
 
 def dump_json(obj, filename: str, **kwargs):
     with open(filename, mode='w', encoding='utf8') as file:
@@ -38,20 +40,25 @@ def dump_json(obj, filename: str, **kwargs):
 
 def read_ini(filename, base={}):
     cfg = ConfigParser()
-    print(f"Reading Config: {filename}")
+    log.info(f"Reading Config: {filename}")
+
     with open(filename, 'r', encoding='utf8') as file:
         cfg.read_string('[_meta]\n' + file.read())
+
     base_path = cfg.get('_meta', 'base', fallback=None)
     if base_path:
         cfg = read_ini(os.path.join(os.path.dirname(filename), base_path), cfg)
+
     cfg.read_dict(base)
     return cfg
 
 def cog_get_pretty_name(cog):
-    if cog is None: return None
+    if cog is None:
+        return None
 
     doc = inspect.getdoc(cog)
     return doc if doc is not None else cog.__class__.__name__
+
 
 permissions = load_json('data/permissions.json')
 def require_tag(tag):

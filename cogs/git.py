@@ -30,7 +30,7 @@ class GitManagementCog:
         """
         Merge a PR.
         """
-        gh_token = getenv("GH_TOKEN")
+        gh_token = ctx.bot.secret_config["github_token"]
 
         data = {
             "commit_title": f"#{pr} Merged by {ctx.message.author}",
