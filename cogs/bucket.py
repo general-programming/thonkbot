@@ -3,7 +3,7 @@ from thonk import utils
 import re
 
 
-class Bucket:
+class Bucket(commands.Cog):
     patterns = {}
 
     def __init__(self, bot):

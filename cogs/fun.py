@@ -1,6 +1,6 @@
 from discord.ext import commands
 
-class FunCog:
+class FunCog(commands.Cog):
     """Fun"""
 
     @commands.command()

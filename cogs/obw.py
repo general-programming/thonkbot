@@ -1,5 +1,5 @@
 from discord.ext import commands
-from thonk import twitter, utils
+from thonk import utils
 import discord
 import re
 import random
@@ -9,7 +9,7 @@ async def find_last_user_message(ctx: commands.Context, user: discord.User) -> d
         if msg.author.id == user.id:
             return msg
 
-class Obw:
+class Obw(commands.Cog):
     """
     obw's cog
     """
@@ -74,7 +74,7 @@ class Obw:
 
         if len(msg.attachments) > 0:
             for attachment in msg.attachments:
-                res = await twitter.upload(await utils.to_fp(attachment))
+                res = await ctx.bot.twitter.upload(await utils.to_fp(attachment))
                 media.append(res.media_id)
 
         if len(msg.clean_content) == 0:
@@ -83,7 +83,7 @@ class Obw:
         if len(tweet_text) > 140:
             raise commands.CommandError("Quote is too long to be a tweet!")
 
-        tweet = await twitter.tweet(tweet_text, media_ids=media)
+        tweet = await ctx.bot.twitter.tweet(tweet_text, media_ids=media)
         await ctx.send(f"https://twitter.com/{tweet.user['screen_name']}/status/{tweet.id_str}")
 
 def setup(bot: commands.Bot):

@@ -8,7 +8,7 @@ import logging
 
 log = logging.getLogger(__name__)
 
-class Core:
+class Core(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self._last_result = None

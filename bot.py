@@ -1,10 +1,10 @@
 from discord.ext import commands
 from os import getenv
-from thonk import utils
+from thonk import utils, twitter
 
 import logging
 
-logging.basicConfig(format="[$(name)s %(levelname)s] %(message)s")
+logging.basicConfig(format="[%(name)s %(levelname)s] %(message)s", level=logging.INFO)
 
 config = utils.read_ini(getenv('CONFIG') or 'configs/config.ini')
 botcfg = config['bot']
@@ -13,13 +13,14 @@ secret_config = utils.read_ini(botcfg['secrets'])['secrets']
 prefixes = botcfg.get('command_prefixes').split(',')
 prefixes = [p.strip() for p in prefixes]
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("thonk")
 
 logger.info(f"Using command prefixes: {', '.join(prefixes)}")
 
 bot = commands.Bot(command_prefix=prefixes, description=botcfg.get('description'))
 bot.config = config
 bot.secret_config = secret_config
+bot.twitter = twitter.Twitter(config.get('twitter', 'config', fallback=None))
 
 @bot.command()
 async def reload(ctx: commands.Context, *args):

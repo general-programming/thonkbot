@@ -19,7 +19,7 @@ modes = {
     '-y': '..',
 }
 
-class Cowsay:
+class Cowsay(commands.Cog):
     """cowsay"""
     @commands.command()
     async def cowsay(self, ctx, opt, *, text = ''):

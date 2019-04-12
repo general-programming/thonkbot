@@ -4,7 +4,7 @@ from thonk import utils
 import aiohttp
 import json
 
-class GitManagementCog:
+class GitManagementCog(commands.Cog):
     """Git Management"""
     def __init__(self):
         pass
