@@ -17,7 +17,7 @@ services:
     build: https://github.com/general-programming/thonkupdate.git
     image: registry.nepeat.com/thonkupdate:latest
     volumes:
-      - /srv/thonkbot:/app/config
+      - /srv/thonkbot/configs:/app/config
       - /srv/thonkbot_config:/app/config/secrets
     environment:
       CONFIG: /app/config/config.ini
