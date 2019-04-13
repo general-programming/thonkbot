@@ -62,18 +62,9 @@ class Core(commands.Cog):
     @commands.command()
     async def echo(self, ctx, *, arg):
         """
-        Echos a raw message.
+        Echos a message.
         """
-        await ctx.send(arg)
-
-    def remove_code_tags(self, content):
-        """Automatically removes code blocks from the code."""
-        # remove ```py\n```
-        if content.startswith('```') and content.endswith('```'):
-            return '\n'.join(content.split('\n')[1:-1])
-
-        # remove `foo`
-        return content.strip('` \n')
+        await ctx.send(utils.safe_text(arg))
 
     @commands.command()
     @utils.is_bot_moderator

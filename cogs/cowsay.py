@@ -1,5 +1,6 @@
 from discord.ext import commands
 from itertools import zip_longest
+from thonk import utils
 
 cow = r"""
         \   ^__^
@@ -22,7 +23,7 @@ modes = {
 class Cowsay(commands.Cog):
     """cowsay"""
     @commands.command()
-    async def cowsay(self, ctx, opt, *, text = ''):
+    async def cowsay(self, ctx, opt, *, text=''):
         """Cowsays a message."""
 
         msg = ''
@@ -37,7 +38,7 @@ class Cowsay(commands.Cog):
         else:
             text = (opt + ' ' + text).strip()
 
-        lines = text.splitlines()
+        lines = utils.safe_text(text).splitlines()
         width = len(max(lines, key=len))
         height = len(lines)
 

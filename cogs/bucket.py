@@ -63,7 +63,7 @@ class Bucket(commands.Cog):
             else:
                 self.patterns[subject] = p = f"{subject} {verb} {sobject}"
 
-            await ctx.send(f"```{p}```")
+            await ctx.send(f"```{utils.safe_text(p)}```")
         else:
             await ctx.send("Your message did not match.")
 
