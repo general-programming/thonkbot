@@ -26,7 +26,7 @@ services:
         condition: any
         delay: 5s
       labels:
-        traefik.enable: true
+        traefik.enable: 'true'
     networks:
       - app
       - publicweb
