@@ -13,3 +13,6 @@ class Twitter:
 
     async def upload(self, fp: BytesIO):
         return await self.twitter.upload_media(fp)
+
+    def fetch_tweet(self, snowflake):
+        return self.twitter.api.statuses.show.get(id=snowflake)
