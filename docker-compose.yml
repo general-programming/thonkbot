@@ -18,7 +18,7 @@ services:
     image: registry.nepeat.com/thonkupdate:latest
     volumes:
       - /srv/thonkbot/configs:/app/config
-      - /srv/thonkbot_config:/app/config/secrets
+      - /srv/thonkbot_config:/secrets
     environment:
       CONFIG: /app/config/config.ini
     deploy:
