@@ -21,12 +21,16 @@ services:
       - /srv/thonkbot_config:/secrets
     environment:
       CONFIG: /app/config/config.ini
+    ports:
+      - "5010:5010"
     deploy:
       restart_policy:
         condition: any
         delay: 5s
       labels:
         traefik.enable: 'true'
+        traefik.port: '5010'
+        traefik.docker.network: 'publicweb'
     networks:
       - app
       - publicweb
