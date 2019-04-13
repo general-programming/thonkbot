@@ -19,6 +19,7 @@ services:
     volumes:
       - /srv/thonkbot/configs:/app/config
       - /srv/thonkbot_config:/secrets
+      - /srv/thonkbot:/srv/thonkbot
     environment:
       CONFIG: /app/config/config.ini
     ports:
