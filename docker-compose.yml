@@ -13,6 +13,26 @@ services:
         delay: 5s
     networks:
       - app
+  thonkupdate:
+    build: https://github.com/general-programming/thonkupdate.git
+    image: registry.nepeat.com/thonkupdate:latest
+    volumes:
+      - /srv/thonkbot:/app/config
+      - /srv/thonkbot_config:/app/config/secrets
+    environment:
+      CONFIG: /app/config/config.ini
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+      labels:
+        traefik.enable: true
+    networks:
+      - app
+      - publicweb
 networks:
   app:
     driver: overlay
+  publicweb:
+    driver: overlay
+    external: true
