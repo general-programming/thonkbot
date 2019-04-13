@@ -30,6 +30,7 @@ services:
       labels:
         traefik.enable: 'true'
         traefik.port: '5010'
+        traefik.frontend.rule: 'Host:hook.thonk.dev'
         traefik.docker.network: 'publicweb'
     networks:
       - app
