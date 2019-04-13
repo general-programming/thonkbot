@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  thonkbot:
+    build: .
+    volumes:
+      - /srv/thonkbot:/app
+      - /srv/thonkbot_config:/secrets
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 5s
+    networks:
+      - app
+networks:
+  app:
+    driver: overlay
