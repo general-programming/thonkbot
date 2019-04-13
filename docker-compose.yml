@@ -3,6 +3,7 @@ version: '3'
 services:
   thonkbot:
     build: .
+    image: registry.nepeat.com/thonkbot:latest
     volumes:
       - /srv/thonkbot:/app
       - /srv/thonkbot_config:/secrets
