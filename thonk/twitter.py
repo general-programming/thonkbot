@@ -15,4 +15,4 @@ class Twitter:
         return await self.twitter.upload_media(fp)
 
     def fetch_tweet(self, snowflake):
-        return self.twitter.api.statuses.show.get(id=snowflake)
+        return self.twitter.api.statuses.show.get(id=snowflake, tweet_mode='extended')
