@@ -13,6 +13,10 @@ class ContentEmbed(Embed):
         super().__init__(**kwargs)
         self.message_content = None
 
+class ContentOnly:
+    def __init__(self):
+        self.message_content = None
+
 class EmbedExpansion(commands.Cog, name="Embeds"):
     tweet_regex = re.compile(r"https?://twitter\.com/.+/status/(\d+)/?")
 
@@ -35,19 +39,24 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
             for ent in tweet.extended_entities.media:
                 e = self._create_embed(message, tweet)
 
-                e.set_image(url=ent.media_url_https)
+                if 'video_info' in ent:
+                    embeds.append(ContentOnly())
+                    continue
+                else:
+                    e.set_image(url=ent.media_url_https)
                 e.url = ent.url
 
                 embeds.append(e)
         else:
             embeds.append(self._create_embed(message, tweet))
 
-        embeds[0].set_author(name=f"{tweet.user.name} (@{tweet.user.screen_name})",
-                             url=f"https://twitter.com/{tweet.user.screen_name}",
-                             icon_url=tweet.user.profile_image_url)
-        embeds[0].description = tweet.text
-        embeds[0].add_field(name="Retweets", value=tweet.retweet_count)
-        embeds[0].add_field(name="Likes", value=tweet.favorite_count)
+        if len(embeds) > 0 and not isinstance(embeds[0], ContentOnly):
+            embeds[0].set_author(name=f"{tweet.user.name} (@{tweet.user.screen_name})",
+                                 url=f"https://twitter.com/{tweet.user.screen_name}",
+                                 icon_url=tweet.user.profile_image_url)
+            embeds[0].description = tweet.text
+            embeds[0].add_field(name="Retweets", value=tweet.retweet_count)
+            embeds[0].add_field(name="Likes", value=tweet.favorite_count)
 
         return embeds
 
@@ -82,11 +91,16 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
         tweet = await self.twitter.fetch_tweet(status_id)
 
         embeds = self.format_tweet(message, tweet)
+        if len(embeds) == 0:
+            return
+
         embeds[0].message_content = message.content
 
         await message.delete()
         for e in embeds:
-            if e.message_content:
+            if isinstance(e, ContentOnly):
+                await message.channel.send(e.message_content)
+            elif e.message_content:
                 await message.channel.send(e.message_content, embed=e)
             else:
                 await message.channel.send(None, embed=e)
