@@ -40,7 +40,6 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
                 e = self._create_embed(message, tweet)
 
                 if 'video_info' in ent:
-                    embeds.append(ContentOnly())
                     continue
                 else:
                     e.set_image(url=ent.media_url_https)
@@ -62,6 +61,8 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
 
     def format_quoted_tweet(self, message: Message, tweet: PeonyResponse):
         embeds = self.format_tweet(message, tweet)
+        if len(embeds) == 0:
+            embeds.append(ContentOnly())
 
         embeds[0].message_content = f"Quoted tweet: https://twitter.com/i/status/{tweet.id_str}"
 
