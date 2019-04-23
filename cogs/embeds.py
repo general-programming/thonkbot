@@ -5,6 +5,7 @@ from peony.data_processing import PeonyResponse
 
 import re
 import logging
+import html
 
 log = logging.getLogger(__name__)
 
@@ -53,7 +54,7 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
             embeds[0].set_author(name=f"{tweet.user.name} (@{tweet.user.screen_name})",
                                  url=f"https://twitter.com/{tweet.user.screen_name}",
                                  icon_url=tweet.user.profile_image_url)
-            embeds[0].description = tweet.text
+            embeds[0].description = html.unescape(tweet.text)
             embeds[0].add_field(name="Retweets", value=tweet.retweet_count)
             embeds[0].add_field(name="Likes", value=tweet.favorite_count)
 
