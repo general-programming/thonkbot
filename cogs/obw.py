@@ -69,7 +69,7 @@ class Obw(commands.Cog):
             return await ctx.send("Couldn't find that user to quote!")
 
         msg = await find_last_user_message(ctx, user)
-        tweet_text = f"\"{msg.clean_content}\" - {str(msg.author)}"
+        tweet_text = f"\"{msg.clean_content}\" - {msg.author.name}"
         media = []
 
         if len(msg.attachments) > 0:
