@@ -10,6 +10,8 @@ config = utils.read_ini(getenv('CONFIG') or 'configs/config.ini')
 botcfg = config['bot']
 secret_config = utils.read_ini(botcfg['secrets'])['secrets']
 
+logging.root.setLevel(config.get('bot', 'log_level', fallback='WARN'))
+
 prefixes = botcfg.get('command_prefixes').split(',')
 prefixes = [p.strip() for p in prefixes]
 

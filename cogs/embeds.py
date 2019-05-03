@@ -15,8 +15,8 @@ class ContentEmbed(Embed):
         self.message_content = None
 
 class ContentOnly:
-    def __init__(self):
-        self.message_content = None
+    def __init__(self, content):
+        self.message_content = content
 
 class EmbedExpansion(commands.Cog, name="Embeds"):
     tweet_regex = re.compile(r"https?://twitter\.com/.+/status/(\d+)/?")
@@ -50,20 +50,12 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
         else:
             embeds.append(self._create_embed(message, tweet))
 
-        if len(embeds) > 0 and not isinstance(embeds[0], ContentOnly):
-            embeds[0].set_author(name=f"{tweet.user.name} (@{tweet.user.screen_name})",
-                                 url=f"https://twitter.com/{tweet.user.screen_name}",
-                                 icon_url=tweet.user.profile_image_url)
-            embeds[0].description = html.unescape(tweet.text)
-            embeds[0].add_field(name="Retweets", value=tweet.retweet_count)
-            embeds[0].add_field(name="Likes", value=tweet.favorite_count)
-
         return embeds
 
     def format_quoted_tweet(self, message: Message, tweet: PeonyResponse):
         embeds = self.format_tweet(message, tweet)
         if len(embeds) == 0:
-            embeds.append(ContentOnly())
+            embeds.append(ContentOnly(None))
 
         embeds[0].message_content = f"Quoted tweet: https://twitter.com/i/status/{tweet.id_str}"
 
@@ -93,12 +85,11 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
         tweet = await self.twitter.fetch_tweet(status_id)
 
         embeds = self.format_tweet(message, tweet)
-        if len(embeds) == 0:
+        if len(embeds) < 2:
             return
 
-        embeds[0].message_content = message.content
+        embeds.pop(0)  # removing the first image, as we no longer delete the original message
 
-        await message.delete()
         for e in embeds:
             if isinstance(e, ContentOnly):
                 await message.channel.send(e.message_content)
