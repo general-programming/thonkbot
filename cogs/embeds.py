@@ -6,6 +6,7 @@ from peony.data_processing import PeonyResponse
 import re
 import logging
 import html
+import json
 
 log = logging.getLogger(__name__)
 
@@ -33,12 +34,29 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
 
         return e
 
-    def format_normal_tweet(self, message: Message, tweet: PeonyResponse):
+    def format_tweet_text(self, tweet: PeonyResponse):
+        full_text = tweet.text
+        start, end = tweet.display_text_range
+        full_text = full_text[start:end]
+
+        for url_ent in tweet.entities.urls:
+            us, ue = url_ent.indices
+            full_text = full_text[:us] + f"[{url_ent.display_url}]({url_ent.expanded_url})" + full_text[ue:]
+
+        return html.unescape(full_text)
+
+    def format_normal_tweet(self, message: Message, tweet: PeonyResponse, *, with_text: bool=False):
         embeds = []
 
         if 'extended_entities' in tweet:
             for ent in tweet.extended_entities.media:
                 e = self._create_embed(message, tweet)
+
+                if with_text:
+                    e.set_author(name=f"{tweet.user.name} (@{tweet.user.screen_name})",
+                                 url=f"https://twitter.com/{tweet.user.screen_name}",
+                                 icon_url=tweet.user.profile_image_url)
+                    e.description = self.format_tweet_text(tweet)
 
                 if 'video_info' in ent:
                     continue
@@ -53,7 +71,7 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
         return embeds
 
     def format_quoted_tweet(self, message: Message, tweet: PeonyResponse):
-        embeds = self.format_tweet(message, tweet)
+        embeds = self.format_normal_tweet(message, tweet, with_text=True)
         if len(embeds) == 0:
             embeds.append(ContentOnly(None))
 
@@ -83,6 +101,8 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
 
         status_id = result.group(1)
         tweet = await self.twitter.fetch_tweet(status_id)
+
+        log.debug(json.dumps(tweet.data))
 
         embeds = self.format_tweet(message, tweet)
         if len(embeds) < 2:
