@@ -60,12 +60,6 @@ class TwitterExpander(Expander):
             for ent in tweet.extended_entities.media:
                 e = self.create_twitter_embed(message, tweet)
 
-                if with_text:
-                    e.set_author(name=f"{tweet.user.name} (@{tweet.user.screen_name})",
-                                 url=f"https://twitter.com/{tweet.user.screen_name}",
-                                 icon_url=tweet.user.profile_image_url)
-                    e.description = self.format_tweet_text(tweet)
-
                 if 'video_info' in ent:
                     continue
                 else:
@@ -75,6 +69,14 @@ class TwitterExpander(Expander):
                 embeds.append(e)
         else:
             embeds.append(self.create_twitter_embed(message, tweet))
+
+        if with_text and len(embeds) > 0:
+            e = embeds[0]
+
+            e.set_author(name=f"{tweet.user.name} (@{tweet.user.screen_name})",
+                         url=f"https://twitter.com/{tweet.user.screen_name}",
+                         icon_url=tweet.user.profile_image_url)
+            e.description = self.format_tweet_text(tweet)
 
         return embeds
 
@@ -95,12 +97,15 @@ class TwitterExpander(Expander):
         if 'quoted_status' in tweet:
             embeds.extend(self.format_quoted_tweet(message, tweet.quoted_status))
 
-        embeds.pop(0) # remove the first embed, this is already embedded by discord
+        if len(embeds) > 0:
+            embeds.pop(0)  # remove the first embed, this is already embedded by discord
 
         return embeds
 
     async def expand(self, message: Message, object_id):
         tweet = await self.twitter.fetch_tweet(object_id)
+
+        log.debug(json.dumps(tweet.data))
 
         return self.format_tweet(message, tweet)
 
