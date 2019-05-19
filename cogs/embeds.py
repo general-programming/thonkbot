@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Message, Embed, TextChannel
+from discord import Message, Embed, TextChannel, Forbidden
 from thonk.twitter import Twitter
 from peony.data_processing import PeonyResponse
 from urllib.parse import urlparse
@@ -144,7 +144,10 @@ class DiscordExpander(Expander):
         target_channel: TextChannel = target_guild.get_channel(object_id[1])
 
         if target_channel is not None:
-            target_message = await target_channel.fetch_message(object_id[2])
+            try:
+                target_message = await target_channel.fetch_message(object_id[2])
+            except Forbidden:
+                return []
 
             if target_message is not None:
                 return self.format_message(message, target_message)
