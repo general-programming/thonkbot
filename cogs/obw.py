@@ -1,12 +1,16 @@
 from discord.ext import commands
 from thonk import utils
+
 import discord
 import re
 import random
+import logging
 
-async def find_last_user_message(ctx: commands.Context, user: discord.User) -> discord.Message:
+log = logging.getLogger(__name__)
+
+async def find_last_user_message(ctx: commands.Context, user: discord.User, starting_text: str="") -> discord.Message:
     async for msg in ctx.channel.history(before=ctx.message):
-        if msg.author.id == user.id:
+        if msg.author.id == user.id and msg.content.startswith(starting_text):
             return msg
 
 class Obw(commands.Cog):
@@ -56,10 +60,15 @@ class Obw(commands.Cog):
         await ctx.send(picked)
 
     @commands.command()
-    async def quote(self, ctx: commands.Context, *, username: str):
+    async def quote(self, ctx: commands.Context, *parts):
         """
         Tweet a quote of <username>'s last message.
         """
+        if len(parts) < 1:
+            raise commands.UserInputError("A user-like is required.")
+
+        username = parts[0]
+
         try:
             user = await commands.MemberConverter().convert(ctx, username)
         except commands.BadArgument:
@@ -68,7 +77,12 @@ class Obw(commands.Cog):
         if user is None:
             return await ctx.send("Couldn't find that user to quote!")
 
-        msg = await find_last_user_message(ctx, user)
+        if len(parts) > 1:
+            start_text = " ".join(parts[1:])
+        else:
+            start_text = ""
+
+        msg = await find_last_user_message(ctx, user, starting_text=start_text)
         tweet_text = f"\"{msg.clean_content}\" - {msg.author.name}"
         media = []
 
