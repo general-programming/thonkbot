@@ -118,14 +118,19 @@ class DiscordExpander(Expander):
         e = ContentEmbed()
 
         e.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
-        e.description = message.content
         e.timestamp = message.created_at
         e.url = message.jump_url
         e.colour = message.author.colour
         e.set_footer(text=f"Linked by {link_message.author.display_name}")
 
-        if len(message.attachments) > 0:
-            e.set_image(url=message.attachments[0].url)
+        if message.channel.nsfw and not link_message.channel.nsfw:
+            e.title = "NSFW warning (Image removed)"
+            e.description = f"||{message.content}||"
+        else:
+            e.description = message.content
+
+            if len(message.attachments) > 0:
+                e.set_image(url=message.attachments[0].url)
 
         embeds.append(e)
 
