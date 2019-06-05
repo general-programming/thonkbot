@@ -60,12 +60,6 @@ class TwitterExpander(Expander):
             for ent in tweet.extended_entities.media:
                 e = self.create_twitter_embed(message, tweet)
 
-                if with_text:
-                    e.set_author(name=f"{tweet.user.name} (@{tweet.user.screen_name})",
-                                 url=f"https://twitter.com/{tweet.user.screen_name}",
-                                 icon_url=tweet.user.profile_image_url)
-                    e.description = self.format_tweet_text(tweet)
-
                 if 'video_info' in ent:
                     continue
                 else:
@@ -75,6 +69,14 @@ class TwitterExpander(Expander):
                 embeds.append(e)
         else:
             embeds.append(self.create_twitter_embed(message, tweet))
+
+        if with_text and len(embeds) > 0:
+            e = embeds[0]
+
+            e.set_author(name=f"{tweet.user.name} (@{tweet.user.screen_name})",
+                         url=f"https://twitter.com/{tweet.user.screen_name}",
+                         icon_url=tweet.user.profile_image_url)
+            e.description = self.format_tweet_text(tweet)
 
         return embeds
 
@@ -95,12 +97,15 @@ class TwitterExpander(Expander):
         if 'quoted_status' in tweet:
             embeds.extend(self.format_quoted_tweet(message, tweet.quoted_status))
 
-        embeds.pop(0) # remove the first embed, this is already embedded by discord
+        if len(embeds) > 0:
+            embeds.pop(0)  # remove the first embed, this is already embedded by discord
 
         return embeds
 
     async def expand(self, message: Message, object_id):
         tweet = await self.twitter.fetch_tweet(object_id)
+
+        log.debug(json.dumps(tweet.data))
 
         return self.format_tweet(message, tweet)
 
@@ -113,14 +118,19 @@ class DiscordExpander(Expander):
         e = ContentEmbed()
 
         e.set_author(name=message.author.display_name, icon_url=message.author.avatar_url)
-        e.description = message.content
         e.timestamp = message.created_at
         e.url = message.jump_url
         e.colour = message.author.colour
         e.set_footer(text=f"Linked by {link_message.author.display_name}")
 
-        if len(message.attachments) > 0:
-            e.set_image(url=message.attachments[0].url)
+        if message.channel.nsfw and not link_message.channel.nsfw:
+            e.title = "NSFW warning (Image removed)"
+            e.description = f"||{message.content}||"
+        else:
+            e.description = message.content
+
+            if len(message.attachments) > 0:
+                e.set_image(url=message.attachments[0].url)
 
         embeds.append(e)
 
@@ -134,7 +144,10 @@ class DiscordExpander(Expander):
         target_channel: TextChannel = target_guild.get_channel(object_id[1])
 
         if target_channel is not None:
-            target_message = await target_channel.fetch_message(object_id[2])
+            try:
+                target_message = await target_channel.fetch_message(object_id[2])
+            except Forbidden:
+                return []
 
             if target_message is not None:
                 return self.format_message(message, target_message)
