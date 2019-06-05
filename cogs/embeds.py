@@ -1,5 +1,5 @@
 from discord.ext import commands
-from discord import Message, Embed, TextChannel
+from discord import Message, Embed, TextChannel, Forbidden
 from thonk.twitter import Twitter
 from peony.data_processing import PeonyResponse
 from urllib.parse import urlparse
@@ -164,12 +164,15 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
             tweet_id = int(path.split('/')[-1])
 
             embeds = await self.twitter_expander.expand(message, tweet_id)
-        elif hostname.endswith('discordapp.com'):
+        elif hostname.endswith('discordapp.com') and not hostname.startswith("cdn"):
             _, _, guild_str, channel_str, message_str = path.split('/')
 
             target = (int(guild_str), int(channel_str), int(message_str))
 
-            embeds = await self.discord_expander.expand(message, target)
+            try:
+                embeds = await self.discord_expander.expand(message, target)
+            except Forbidden:
+                return
         else:
             return
 
