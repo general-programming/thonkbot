@@ -16,9 +16,11 @@ class Core(commands.Cog):
         if utils.is_deployed(bot):
             self.raven = Client(transport=AioHttpTransport)
 
+    @commands.Cog.listener()
     async def on_ready(self):
         log.info(f"Logged in as {self.bot.user.name}.")
 
+    @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: commands.CommandError):
         if isinstance(error, commands.CommandNotFound):
             return
@@ -67,7 +69,7 @@ class Core(commands.Cog):
         await ctx.send(utils.safe_text(arg))
 
     @commands.command()
-    @utils.is_bot_moderator
+    @utils.require_tag("owner")
     async def restart(self, ctx: commands.Context):
         """
         Restart the bot.
