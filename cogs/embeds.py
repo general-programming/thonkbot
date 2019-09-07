@@ -166,6 +166,9 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
         if message.author.bot:
             return
 
+        if "+noexpand" in message.content:
+            return
+
         result = self.link_regex.search(message.content)
         if not result: return
 
