@@ -20,7 +20,7 @@ class TwilioCog(Cog):
     def __init__(self, twilio: Twilio):
         self.twilio = twilio
 
-    @commands.command(aliases=["sms", "mms"])
+    @commands.command(aliases=["sms", "mms", "sendtext"])
     @utils.require_tag("employee")
     async def msg(self, ctx: Context, phone: PhoneConverter, *, arg: str = None):
         """Send a SMS/MMS message"""
