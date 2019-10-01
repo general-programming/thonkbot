@@ -8,7 +8,7 @@ logging.basicConfig(format="[%(name)s %(levelname)s] %(message)s", level=logging
 
 config = utils.read_ini(getenv('CONFIG') or 'configs/config.ini')
 botcfg = config['bot']
-secret_config = utils.read_ini(botcfg['secrets'])['secrets']
+secret_config = utils.read_ini(botcfg['secrets'])
 
 logging.root.setLevel(config.get('bot', 'log_level', fallback='WARN'))
 
@@ -23,7 +23,7 @@ bot = commands.Bot(command_prefix=prefixes, description=botcfg.get('description'
 bot.config = config
 bot.secret_config = secret_config
 bot.twitter = twitter.Twitter(config.get('twitter', 'config', fallback=None))
-bot.twilio = twilio.Twilio(utils.read_ini(botcfg['secrets'])['twilio'])
+bot.twilio = twilio.Twilio(secret_config['twilio'])
 
 @bot.command()
 async def reload(ctx: commands.Context, *args):
@@ -53,4 +53,4 @@ async def reload(ctx: commands.Context, *args):
 utils.load_all_cogs(bot)
 
 logger.info("Connecting...")
-bot.run(secret_config['token'])
+bot.run(secret_config['discord']['token'])
