@@ -1,6 +1,6 @@
 from discord.ext import commands
 from os import getenv
-from thonk import utils, twitter
+from thonk import utils, twitter, twilio
 
 import logging
 
@@ -23,6 +23,7 @@ bot = commands.Bot(command_prefix=prefixes, description=botcfg.get('description'
 bot.config = config
 bot.secret_config = secret_config
 bot.twitter = twitter.Twitter(config.get('twitter', 'config', fallback=None))
+bot.twilio = twilio.Twilio(utils.read_ini(botcfg['secrets'])['twilio'])
 
 @bot.command()
 async def reload(ctx: commands.Context, *args):
