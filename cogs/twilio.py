@@ -15,33 +15,28 @@ class PhoneConverter(Converter):
 
 
 class TwilioCog(Cog):
+    """Twilio handler"""
+
     def __init__(self, twilio: Twilio):
         self.twilio = twilio
 
-    @commands.command()
+    @commands.command(aliases=["sms", "mms"])
     @utils.require_tag("employee")
-    async def sms(self, ctx: Context, phone: PhoneConverter, *, arg: str):
-        try:
-            await self.twilio.send_sms(phone, arg)
-            await ctx.message.add_reaction("\N{WHITE HEAVY CHECK MARK}")
-        except Exception:
-            await ctx.message.add_reaction("\N{CROSS MARK}")
-            raise
-
-    @commands.command()
-    @utils.require_tag("employee")
-    async def mms(self, ctx: Context, phone: PhoneConverter, *, arg: str = None):
-        if len(ctx.message.attachments) is 0:
-            raise commands.CommandError("Attachment is required for MMS")
-
+    async def msg(self, ctx: Context, phone: PhoneConverter, *, arg: str = None):
+        """Send a SMS/MMS message"""
         attachments = [i.url for i in ctx.message.attachments if i.url]
+        if len(attachments) is 0 and arg is None:
+            raise commands.CommandError("Body or attachment required to send message")
+
         try:
-            await self.twilio.send_mms(phone, attachments, arg)
+            if len(attachments):
+                await self.twilio.send_mms(phone, attachments, arg)
+            else:
+                await self.twilio.send_sms(phone, arg)
             await ctx.message.add_reaction("\N{WHITE HEAVY CHECK MARK}")
         except Exception:
             await ctx.message.add_reaction("\N{CROSS MARK}")
             raise
-
 
 
 def setup(bot):
