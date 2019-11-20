@@ -92,13 +92,13 @@ class TwitterExpander(Expander):
     def format_tweet(self, message: Message, tweet: PeonyResponse):
         embeds = []
 
-        embeds.extend(self.format_normal_tweet(message, tweet))
+        # Discord embeds tweet images now
+        # embeds.extend(self.format_normal_tweet(message, tweet))
+        # if len(embeds) > 0:
+        #     embeds.pop(0)  # remove the first embed, this is already embedded by discord
 
         if 'quoted_status' in tweet:
             embeds.extend(self.format_quoted_tweet(message, tweet.quoted_status))
-
-        if len(embeds) > 0:
-            embeds.pop(0)  # remove the first embed, this is already embedded by discord
 
         return embeds
 
@@ -204,4 +204,6 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
 
 
 def setup(bot: commands.Bot):
-    bot.add_cog(EmbedExpansion(bot, bot.twitter))
+    # TODO: Refactor cog to be more modular (so discord expansions can still work with twitter disabled)
+    if hasattr(bot, 'twitter'):
+        bot.add_cog(EmbedExpansion(bot, bot.twitter))

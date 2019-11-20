@@ -40,4 +40,5 @@ class TwilioCog(Cog):
 
 
 def setup(bot):
-    bot.add_cog(TwilioCog(bot.twilio))
+    if hasattr(bot, 'twilio'):
+        bot.add_cog(TwilioCog(bot.twilio))

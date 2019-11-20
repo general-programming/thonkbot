@@ -22,8 +22,12 @@ logger.info(f"Using command prefixes: {', '.join(prefixes)}")
 bot = commands.Bot(command_prefix=prefixes, description=botcfg.get('description'))
 bot.config = config
 bot.secret_config = secret_config
-bot.twitter = twitter.Twitter(config.get('twitter', 'config', fallback=None))
-bot.twilio = twilio.Twilio(secret_config['twilio'])
+
+if config.has_option('twitter', 'config'):
+    bot.twitter = twitter.Twitter(config.get('twitter', 'config', fallback=None))
+
+if secret_config.has_section('twilio'):
+    bot.twilio = twilio.Twilio(secret_config['twilio'])
 
 @bot.command()
 async def reload(ctx: commands.Context, *args):
