@@ -85,7 +85,11 @@ class TwitterExpander(Expander):
         if len(embeds) == 0:
             embeds.append(ContentOnly(None))
 
-        embeds[0].message_content = f"Quoted tweet: https://twitter.com/i/status/{tweet.id_str}"
+        screen_name = "i"
+        if 'user' in tweet:
+            screen_name = tweet.user.screen_name or screen_name
+
+        embeds[0].message_content = f"Quoted tweet: https://twitter.com/{screen_name}/status/{tweet.id_str}"
 
         return embeds
 
@@ -193,10 +197,10 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
             return
 
         for e in embeds:
-            if not isinstance(e, ContentEmbed):
-                await message.channel.send(None, embed=e)
             if isinstance(e, ContentOnly):
                 await message.channel.send(e.message_content)
+            elif not isinstance(e, ContentEmbed):
+                await message.channel.send(None, embed=e)
             elif e.message_content:
                 await message.channel.send(e.message_content, embed=e)
             else:
