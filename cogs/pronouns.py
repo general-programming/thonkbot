@@ -29,16 +29,28 @@ class Pronoun:
 		return f"https://pronoun.is/{str(self)}"
 
 class PronounRoles(commands.Cog):
+	simple_aliases = {
+		"they/them": "they/them/their/theirs/themself",
+		"they/them/themself": "they/them/their/theirs/themself",
+		"they/them/themselves": "they/them/their/theirs/themselves"
+	}
+	
 	def __init__(self, pronouns):
 		self.pronouns = pronouns
 		self.role_cache = {}
 
 	def find_pronoun(self, pronoun_part: str):
-		guesses = filter(lambda p: p.matches(pronoun_part), self.pronouns)
+		part = pronoun_part.strip()
+		if part in self.simple_aliases:
+			part = self.simple_aliases[part]
+		
+		guesses = filter(lambda p: p.matches(part), self.pronouns)
 		guesses = list(guesses)
 
 		if len(guesses) > 1:
 			raise Exception("That could mean too many pronouns! Try being more specific.")
+		elif len(guesses) < 1:
+			raise Exception("No pronouns found that look like that (sorry my guess code is very basic,,)")
 		else:
 			return guesses[0]
 
@@ -52,7 +64,7 @@ class PronounRoles(commands.Cog):
 			role_id = self.role_cache[full_pronoun]
 			role = ctx.message.guild.get_role(role_id)
 
-		if role is None:			
+		if role is None:
 			role = get(ctx.message.guild.roles, name=full_pronoun)
 
 		if role is None:
