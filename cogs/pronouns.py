@@ -78,15 +78,15 @@ class PronounRoles(commands.Cog):
 	@commands.command()
 	async def pronouns(self, ctx: commands.Context, user: Member):
 		pronoun_roles = filter(lambda r: len(r.name.split("/")) == 5, user.roles)
-		pronouns = map(lambda r: Pronoun(r.name), pronoun_roles)
+		pronouns = map(lambda r: self.find_pronoun(r.name), pronoun_roles)
 		pronouns = list(pronouns)
 
 		if len(pronouns) == 1:
 			pronoun = pronouns[0]
 			await ctx.send(f"**{user.display_name}** uses **{pronoun.short_form()}** pronouns ({pronoun.generate_link()})")
 		else:
-			formatted = ", ".join(map(lambda p: p.short_form(), pronouns[:-1])) +\
-				f"and {pronouns[-1].short_form()}"
+			formatted = "**, **".join(map(lambda p: p.short_form(), pronouns[:-1])) +\
+				f"** and **{pronouns[-1].short_form()}"
 			
 			await ctx.send(f"**{user.display_name}** uses **{formatted}** pronouns.")
 
