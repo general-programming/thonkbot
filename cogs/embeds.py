@@ -81,25 +81,15 @@ class TwitterExpander(Expander):
         return embeds
 
     def format_quoted_tweet(self, message: Message, tweet: PeonyResponse):
-        embeds = self.format_normal_tweet(message, tweet, with_text=True)
-        if len(embeds) == 0:
-            embeds.append(ContentOnly(None))
-
         screen_name = "i"
         if 'user' in tweet:
             screen_name = tweet.user.screen_name or screen_name
 
-        embeds[0].message_content = f"Quoted tweet: https://twitter.com/{screen_name}/status/{tweet.id_str}"
-
-        return embeds
+        embed = ContentOnly(f"Quoted tweet: https://twitter.com/{screen_name}/status/{tweet.id_str}")
+        return [embed]
 
     def format_tweet(self, message: Message, tweet: PeonyResponse):
         embeds = []
-
-        # Discord embeds tweet images now
-        # embeds.extend(self.format_normal_tweet(message, tweet))
-        # if len(embeds) > 0:
-        #     embeds.pop(0)  # remove the first embed, this is already embedded by discord
 
         if 'quoted_status' in tweet:
             embeds.extend(self.format_quoted_tweet(message, tweet.quoted_status))
