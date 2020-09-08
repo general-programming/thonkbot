@@ -92,14 +92,16 @@ class Obw(commands.Cog):
                 mime, _ = mimetypes.guess_type(attachment.url)
                 res = await ctx.bot.twitter.upload(await utils.to_fp(attachment), mime)
                 media.append(res.media_id)
-
-        if len(msg.clean_content) == 0:
-            raise commands.CommandError("That message is empty!")
+        elif len(msg.clean_content) == 0:
+            raise commands.CommandError("Huh? Message has no attachments or content.")
 
         if len(tweet_text) > 140:
             raise commands.CommandError("Quote is too long to be a tweet!")
 
-        tweet = await ctx.bot.twitter.tweet(tweet_text, media_ids=media)
+        if len(msg.clean_content) == 0:
+            tweet = await ctx.bot.twitter.tweet("", media_ids=media)
+        else:
+            tweet = await ctx.bot.twitter.tweet(tweet_text, media_ids=media)
         await ctx.send(f"https://twitter.com/{tweet.user['screen_name']}/status/{tweet.id_str}")
 
 def setup(bot: commands.Bot):
