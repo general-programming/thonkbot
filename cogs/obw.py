@@ -5,6 +5,7 @@ import discord
 import re
 import random
 import logging
+import mimetypes
 
 log = logging.getLogger(__name__)
 
@@ -88,7 +89,8 @@ class Obw(commands.Cog):
 
         if len(msg.attachments) > 0:
             for attachment in msg.attachments:
-                res = await ctx.bot.twitter.upload(await utils.to_fp(attachment))
+                mime, _ = mimetypes.guess_type(attachment.url)
+                res = await ctx.bot.twitter.upload(await utils.to_fp(attachment), mime)
                 media.append(res.media_id)
 
         if len(msg.clean_content) == 0:

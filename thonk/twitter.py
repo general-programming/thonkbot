@@ -11,8 +11,8 @@ class Twitter:
     async def tweet(self, message: str, **kwargs):
         return await self.twitter.api.statuses.update.post(status=message, **kwargs)
 
-    async def upload(self, fp: BytesIO):
-        return await self.twitter.upload_media(fp)
+    async def upload(self, fp: BytesIO, mime: str):
+        return await self.twitter.upload_media(fp, chunked=True, media_type=mime)
 
     def fetch_tweet(self, snowflake):
         return self.twitter.api.statuses.show.get(id=snowflake, tweet_mode='extended')
