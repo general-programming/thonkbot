@@ -30,7 +30,7 @@ class Expander:
         return e
 
     def matches(self, hostname):
-        return self.filter.fullmatch(hostname) is not None
+        return self.filter.search(hostname) is not None
 
     async def expand(self, message: Message, object_id):
         pass
@@ -112,7 +112,7 @@ class TwitterExpander(Expander):
 class DiscordExpander(Expander):
     def __init__(self, bot: commands.Bot):
         self.discord_bot = bot
-        self.filter = re.compile(r"^discord(app)?\.com")
+        self.filter = re.compile(r"(?<!cdn\.)discord(app)?\.com")
 
     def format_message(self, link_message: Message, message: Message):
         embeds = []
