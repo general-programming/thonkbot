@@ -29,12 +29,18 @@ class Expander:
 
         return e
 
+    def matches(self, hostname):
+        return self.filter.fullmatch(hostname) is not None
+
     async def expand(self, message: Message, object_id):
         pass
 
 class TwitterExpander(Expander):
     def __init__(self, twitter_client: Twitter):
         self.twitter = twitter_client
+
+    def matches(self, hostname):
+        return hostname == "twitter.com"
 
     def create_twitter_embed(self, message: Message, tweet: PeonyResponse):
         e = super().create_embed(message)
@@ -106,6 +112,7 @@ class TwitterExpander(Expander):
 class DiscordExpander(Expander):
     def __init__(self, bot: commands.Bot):
         self.discord_bot = bot
+        self.filter = re.compile(r"^discord(app)?\.com")
 
     def format_message(self, link_message: Message, message: Message):
         embeds = []
@@ -170,11 +177,14 @@ class EmbedExpansion(commands.Cog, name="Embeds"):
 
         log.debug(f"{hostname}; {path}")
 
-        if hostname == 'twitter.com':
+        if self.twitter_expander.matches(hostname):
             tweet_id = int(path.split('/')[-1])
 
             embeds = await self.twitter_expander.expand(message, tweet_id)
-        elif hostname.endswith('discordapp.com') and not hostname.startswith("cdn"):
+        elif self.discord_expander.matches(hostname):
+            if message.content.startswith("Replying to"):
+                return  # disable when using discord's bad reply feature
+
             _, _, guild_str, channel_str, message_str = path.split('/')
 
             target = (int(guild_str), int(channel_str), int(message_str))
