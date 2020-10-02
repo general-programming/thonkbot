@@ -95,7 +95,7 @@ class Obw(commands.Cog):
         elif len(msg.clean_content) == 0:
             raise commands.CommandError("Huh? Message has no attachments or content.")
 
-        if len(tweet_text) > 140:
+        if len(tweet_text) > 280 - (24 * len(media)):
             raise commands.CommandError("Quote is too long to be a tweet!")
 
         if len(msg.clean_content) == 0:
